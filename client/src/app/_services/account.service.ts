@@ -36,7 +36,34 @@ export class AccountService {
       })
     )
   }
+/* TAK DZIAŁA FUNKCJA ANONIMOWA |
+                                V
+   register2(model: any) {
+    this.http.post(this.baseurl + 'account/register', model).subscribe(
+      (user:User) => {
+        if(user) {
+          localStorage.setItem('user', JSON.stringify(user));
+          this.currentUserSource.next(user);
+        }
+      }
+    )
+  }
 
+  TUTAJ PRZYKŁAD JAK WYGLĄDAŁABY FUNKCJA REGISTER2 BEZ FUNKCJI ANONIMOWEJ CZYLI " => "
+
+  register2(model: any) {
+    this.http.post(this.baseurl + 'account/register', model).subscribe(this.setItUp)
+  }
+
+  setItUp(user: User) {
+
+      if(user) {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.currentUserSource.next(user);
+      }
+
+  }
+*/
   setCurrentUser(user: User) {
     this.currentUserSource.next(user);
   }
