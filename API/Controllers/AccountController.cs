@@ -23,13 +23,13 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDTO registerDto)
         {
-            if(await UserExists(registerDto.UserName)) return BadRequest("Username is taken."); //checking if username is available 
+            if(await UserExists(registerDto.Username)) return BadRequest("Username is taken."); //checking if Username is available 
 
             using var hmac = new HMACSHA512(); //declaration of encoding object to encode password
 
             var user = new AppUser //declatration of a new user
             {
-                UserName = registerDto.UserName.ToLower(), //all username are in lowercase to prevent repeated usernames
+                Username = registerDto.Username.ToLower(), //all Username are in lowercase to prevent repeated Usernames
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), //here is encoding magic - GETBYTES doesn't take nulls
                 PasswordSalt = hmac.Key //giving the password the KEY to later decrypt it during logging
             };
@@ -40,7 +40,7 @@ namespace API.Controllers
 
             return new UserDto
             {
-                UserName = user.UserName,
+                Username = user.Username,
                 Token = _tokenService.CreateToken(user)
             };
         }
@@ -49,9 +49,9 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDTO loginDTO)
         {
             var user = await _context.Users.
-            SingleOrDefaultAsync(x => x.UserName == loginDTO.UserName); //taking username out of the DB
+            SingleOrDefaultAsync(x => x.Username == loginDTO.Username); //taking Username out of the DB
 
-            if(user == null) return Unauthorized("Invalid username"); //validation - if user is not in DB throw Unauthorized - "Invalid username"
+            if(user == null) return Unauthorized("Invalid Username"); //validation - if user is not in DB throw Unauthorized - "Invalid Username"
 
             using var hmac = new HMACSHA512(user.PasswordSalt); //Decrypting with a given key from REGISTER METHOD
 
@@ -64,14 +64,14 @@ namespace API.Controllers
 
             return new UserDto
             {
-                UserName = user.UserName,
+                Username = user.Username,
                 Token = _tokenService.CreateToken(user)
             };
         }
 
-        private async Task<bool> UserExists(string username)
+        private async Task<bool> UserExists(string Username)
         {
-            return await _context.Users.AnyAsync(x => x.UserName == username.ToLower());
+            return await _context.Users.AnyAsync(x => x.Username == Username.ToLower());
         }
     }
 }
